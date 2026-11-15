@@ -1,0 +1,64 @@
+{
+  "scale": "starter_anomalies",
+  "row_counts": {
+    "orders": 100,
+    "order_lines": 201,
+    "skus": 10,
+    "nodes": 2,
+    "inventory": 20,
+    "allocations": 201,
+    "capacities": 60,
+    "shipments": 103,
+    "shipment_lines": 201,
+    "tracking": 412,
+    "promises": 100,
+    "outcomes": 100
+  },
+  "issues_count": 7,
+  "issues_by_type": {
+    "ALLOCATION_EXCEEDS_STOCK": 1,
+    "DELIVERED_BEFORE_DISPATCH": 1,
+    "INVALID_TRACKING_SEQUENCE": 1,
+    "OVER_ALLOCATED_ORDER_LINE": 1,
+    "PROMISE_BEFORE_ORDER": 1,
+    "SPLIT_STATUS_ROLLUP_MISMATCH": 1,
+    "UNSUPPORTED_CARRIER_ZONE": 1
+  },
+  "issues": [
+    {
+      "issue_type": "OVER_ALLOCATED_ORDER_LINE",
+      "record_id": "61",
+      "details": "Allocated quantity exceeds ordered quantity"
+    },
+    {
+      "issue_type": "ALLOCATION_EXCEEDS_STOCK",
+      "record_id": "ALLOC-2026-000001",
+      "details": "Single allocation exceeds warehouse stock"
+    },
+    {
+      "issue_type": "UNSUPPORTED_CARRIER_ZONE",
+      "record_id": "SHP-2026-000001",
+      "details": "Unsupported carrier destination zone"
+    },
+    {
+      "issue_type": "INVALID_TRACKING_SEQUENCE",
+      "record_id": "TRK-SHP-2026-000002-004",
+      "details": "Event timestamp precedes previous event"
+    },
+    {
+      "issue_type": "DELIVERED_BEFORE_DISPATCH",
+      "record_id": "TRK-SHP-2026-000002-004",
+      "details": "Delivery occurred before dispatch"
+    },
+    {
+      "issue_type": "PROMISE_BEFORE_ORDER",
+      "record_id": "PROM-ORD-2026-000001-01",
+      "details": "Promised date precedes order date"
+    },
+    {
+      "issue_type": "SPLIT_STATUS_ROLLUP_MISMATCH",
+      "record_id": "ORD-2026-000006",
+      "details": "Expected DELIVERED, found PARTIALLY_DELIVERED"
+    }
+  ]
+}

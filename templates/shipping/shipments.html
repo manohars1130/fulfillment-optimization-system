@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Shipment Management</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+
+<body class="bg-light">
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between mb-4">
+        <div>
+            <h2>Shipment Management</h2>
+            <p class="text-muted">
+                Create shipments, calculate delivery promises
+                and manage tracking.
+            </p>
+        </div>
+
+        <a href="/" class="btn btn-outline-secondary">
+            Dashboard
+        </a>
+    </div>
+
+    <div id="message" role="status" aria-live="polite"></div>
+
+    <!-- Allocated Orders -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4>Allocated Orders</h4>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Destination</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="ordersTable"></tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipment Results -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4>Created Shipments</h4>
+
+            <p id="promiseDate"></p>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Shipment ID</th>
+                            <th>Warehouse</th>
+                            <th>Carrier</th>
+                            <th>Delivery Date</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="shipmentsTable"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Tracking -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4>Shipment Tracking</h4>
+
+            <form id="trackingForm">
+
+                <div class="mb-3">
+                    <label for="shipmentId" class="form-label">
+                        Shipment ID
+                    </label>
+
+                    <input
+                        id="shipmentId"
+                        class="form-control"
+                        placeholder="SHP-2026-000001"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label for="eventType" class="form-label">
+                        Tracking Status
+                    </label>
+
+                    <select id="eventType" class="form-select">
+                        <option value="DISPATCHED">Dispatched</option>
+                        <option value="IN_TRANSIT">In Transit</option>
+                        <option value="OUT_FOR_DELIVERY">
+                            Out for Delivery
+                        </option>
+                        <option value="DELIVERED">Delivered</option>
+                        <option value="EXCEPTION">Exception</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="remarks" class="form-label">
+                        Remarks
+                    </label>
+
+                    <input
+                        id="remarks"
+                        class="form-control"
+                        placeholder="Shipment update"
+                        maxlength="255"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Update Tracking
+                </button>
+
+            </form>
+
+            <div id="trackingResult" class="mt-3"></div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+function getCookie(name) {
+    const cookie = document.cookie
+        .split("; ")
+        .find(row => row.startsWith(name + "="));
+
+    return cookie
+        ? decodeURIComponent(cookie.slice(name.length + 1))
+        : "";
+}
+
+function showMessage(text, type = "info") {
+    const element = document.getElementById("message");
+    element.className = "alert alert-" + type;
+    element.textContent = text;
+}
+
+async function parseResponse(response) {
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.error ||
+            data.detail ||
+            JSON.stringify(data)
+        );
+    }
+
+    return data;
+}
+
+async function loadOrders() {
+    try {
+        const response = await fetch("/api/orders/", {
+            credentials: "same-origin"
+        });
+
+        const data = await parseResponse(response);
+
+        const orders = Array.isArray(data)
+            ? data
+            : data.results;
+
+        if (!Array.isArray(orders)) {
+            throw new Error("Unexpected order API response");
+        }
+
+        const allocated = orders.filter(
+            order => order.status === "ALLOCATED"
+        );
+
+        const tbody = document.getElementById("ordersTable");
+        tbody.replaceChildren();
+
+        if (allocated.length === 0) {
+            const row = tbody.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 4;
+            cell.textContent = "No allocated orders found.";
+            return;
+        }
+
+        for (const order of allocated) {
+            const row = tbody.insertRow();
+
+            for (const value of [
+                order.order_id,
+                order.customer_name,
+                order.destination_city
+            ]) {
+                const cell = row.insertCell();
+                cell.textContent = value ?? "";
+            }
+
+            const actionCell = row.insertCell();
+            const button = document.createElement("button");
+
+            button.textContent = "Create Shipments";
+            button.className = "btn btn-primary btn-sm";
+
+            button.onclick = () =>
+                createShipments(order.order_id, button);
+
+            actionCell.appendChild(button);
+        }
+
+    } catch (error) {
+        showMessage(error.message, "danger");
+    }
+}
+
+async function createShipments(orderId, button) {
+    button.disabled = true;
+
+    try {
+        const response = await fetch(
+            `/api/orders/${encodeURIComponent(orderId)}/create-shipments/`,
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({})
+            }
+        );
+
+        const data = await parseResponse(response);
+
+        showMessage("Shipments created successfully!", "success");
+
+        document.getElementById("promiseDate").textContent =
+            "Order: " + data.order_id +
+            " | Promised Delivery: " + data.promise_date;
+
+        const tbody = document.getElementById("shipmentsTable");
+        tbody.replaceChildren();
+
+        for (const shipment of data.shipments) {
+            const row = tbody.insertRow();
+
+            for (const value of [
+                shipment.shipment_id,
+                shipment.node_id,
+                shipment.carrier,
+                shipment.delivery_date
+            ]) {
+                row.insertCell().textContent = value;
+            }
+
+            const cell = row.insertCell();
+            const link = document.createElement("a");
+
+            link.href = `/api/shipments/${encodeURIComponent(
+                shipment.shipment_id
+            )}/`;
+
+            link.textContent = "View";
+            link.className = "btn btn-outline-primary btn-sm";
+
+            cell.appendChild(link);
+        }
+
+        await loadOrders();
+
+    } catch (error) {
+        showMessage(error.message, "danger");
+    } finally {
+        button.disabled = false;
+    }
+}
+
+document.getElementById("trackingForm")
+    .addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const shipmentId = document.getElementById(
+            "shipmentId"
+        ).value.trim();
+
+        const eventType = document.getElementById(
+            "eventType"
+        ).value;
+
+        const remarks = document.getElementById(
+            "remarks"
+        ).value.trim();
+
+        const result = document.getElementById(
+            "trackingResult"
+        );
+
+        try {
+            const response = await fetch(
+                `/api/shipments/${encodeURIComponent(shipmentId)}/tracking/`,
+                {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken")
+                    },
+                    body: JSON.stringify({
+                        event_type: eventType,
+                        remarks: remarks
+                    })
+                }
+            );
+
+            const data = await parseResponse(response);
+
+            result.className = "alert alert-success mt-3";
+
+            result.textContent =
+                "Shipment: " + data.shipment_id +
+                " | Status: " + data.shipment_status +
+                " | Order: " + data.order_status;
+
+        } catch (error) {
+            result.className = "alert alert-danger mt-3";
+            result.textContent = error.message;
+        }
+    });
+
+loadOrders();
+</script>
+
+</body>
+</html>

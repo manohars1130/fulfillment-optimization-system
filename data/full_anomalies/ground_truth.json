@@ -1,0 +1,32 @@
+[
+  {
+    "issue_type": "PROMISE_BEFORE_ORDER",
+    "record_id": "PROM-ORD-2026-000001-01",
+    "expected_label": 1,
+    "details": "Promised date earlier than order date"
+  },
+  {
+    "issue_type": "ALLOCATION_EXCEEDS_STOCK",
+    "record_id": "ALLOC-2026-000001",
+    "expected_label": 1,
+    "details": "Allocated quantity exceeds physical stock"
+  },
+  {
+    "issue_type": "UNSUPPORTED_CARRIER_ZONE",
+    "record_id": "SHP-2026-000001",
+    "expected_label": 1,
+    "details": "Service has no supported destination-zone mapping"
+  },
+  {
+    "issue_type": "DELIVERED_BEFORE_DISPATCH",
+    "record_id": "TRK-SHP-2026-000002-004",
+    "expected_label": 1,
+    "details": "Delivery timestamp precedes dispatch"
+  },
+  {
+    "issue_type": "SPLIT_STATUS_ROLLUP_MISMATCH",
+    "record_id": "ORD-2026-000146",
+    "expected_label": 1,
+    "details": "All split shipments delivered but order marked partial"
+  }
+]

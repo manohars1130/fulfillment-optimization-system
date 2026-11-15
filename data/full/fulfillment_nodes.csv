@@ -1,0 +1,21 @@
+node_id,name,city,state,is_active
+FUL-2026-000001,Hyderabad Warehouse 1,Hyderabad,Telangana,True
+FUL-2026-000002,Bengaluru Warehouse 2,Bengaluru,Karnataka,True
+FUL-2026-000003,Mumbai Warehouse 3,Mumbai,Maharashtra,True
+FUL-2026-000004,Delhi Warehouse 4,Delhi,Delhi,True
+FUL-2026-000005,Chennai Warehouse 5,Chennai,Tamil Nadu,True
+FUL-2026-000006,Pune Warehouse 6,Pune,Maharashtra,True
+FUL-2026-000007,Kolkata Warehouse 7,Kolkata,West Bengal,True
+FUL-2026-000008,Ahmedabad Warehouse 8,Ahmedabad,Gujarat,True
+FUL-2026-000009,Jaipur Warehouse 9,Jaipur,Rajasthan,True
+FUL-2026-000010,Lucknow Warehouse 10,Lucknow,Uttar Pradesh,True
+FUL-2026-000011,Hyderabad Warehouse 11,Hyderabad,Telangana,True
+FUL-2026-000012,Bengaluru Warehouse 12,Bengaluru,Karnataka,True
+FUL-2026-000013,Mumbai Warehouse 13,Mumbai,Maharashtra,True
+FUL-2026-000014,Delhi Warehouse 14,Delhi,Delhi,True
+FUL-2026-000015,Chennai Warehouse 15,Chennai,Tamil Nadu,True
+FUL-2026-000016,Pune Warehouse 16,Pune,Maharashtra,True
+FUL-2026-000017,Kolkata Warehouse 17,Kolkata,West Bengal,True
+FUL-2026-000018,Ahmedabad Warehouse 18,Ahmedabad,Gujarat,True
+FUL-2026-000019,Jaipur Warehouse 19,Jaipur,Rajasthan,True
+FUL-2026-000020,Lucknow Warehouse 20,Lucknow,Uttar Pradesh,True

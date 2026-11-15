@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+    <title>Fulfillment Analytics</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body { background: #f4f6fa; }
+        .metric {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+        }
+        .metric h2 { font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between mb-4">
+        <div>
+            <h2>Operations Analytics</h2>
+            <p class="text-muted">
+                Fulfillment and Delivery Performance
+            </p>
+        </div>
+        <a href="/" class="btn btn-outline-primary">
+            Dashboard
+        </a>
+    </div>
+
+    <div id="message" role="status"></div>
+
+    <div class="row g-3" id="metrics"></div>
+
+    <div class="card mt-4 shadow-sm">
+        <div class="card-body">
+            <h4>Warehouse Inventory</h4>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Warehouse</th>
+                            <th>City</th>
+                            <th>On Hand</th>
+                            <th>Reserved</th>
+                            <th>Available</th>
+                        </tr>
+                    </thead>
+                    <tbody id="warehouseTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4 shadow-sm">
+        <div class="card-body">
+            <h4>Validation Preview</h4>
+            <p id="validationSummary"></p>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Issue Type</th>
+                            <th>Record ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issuesTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function addCell(row, value) {
+    const cell = row.insertCell();
+    cell.textContent = value ?? "";
+}
+
+async function getJSON(url) {
+    const response = await fetch(url, {
+        credentials: "same-origin"
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            "Request failed: " + response.status
+        );
+    }
+    return response.json();
+}
+
+async function loadAnalytics() {
+    try {
+        const [data, validation] = await Promise.all([
+            getJSON("/api/dashboard/summary/"),
+            getJSON("/api/validation/report/")
+        ]);
+
+        const metrics = [
+            ["Total Orders", data.total_orders],
+            ["Pending Orders", data.pending_orders],
+            ["Allocated Orders", data.allocated_orders],
+            ["Delivered Orders", data.delivered_orders],
+            ["Exception Orders", data.exception_orders],
+            ["Total Shipments", data.total_shipments],
+            ["Tracking Events", data.total_tracking_events],
+            ["Available Stock", data.available_stock],
+            ["Delivery Completion", data.delivery_completion_rate + "%"]
+        ];
+
+        const container = document.getElementById("metrics");
+        container.replaceChildren();
+
+        for (const [name, value] of metrics) {
+            const col = document.createElement("div");
+            col.className = "col-md-4 col-lg-3";
+
+            const card = document.createElement("div");
+            card.className = "card metric h-100";
+
+            const body = document.createElement("div");
+            body.className = "card-body";
+
+            const heading = document.createElement("h6");
+            heading.className = "text-muted";
+            heading.textContent = name;
+
+            const number = document.createElement("h2");
+            number.textContent = value;
+
+            body.append(heading, number);
+            card.appendChild(body);
+            col.appendChild(card);
+            container.appendChild(col);
+        }
+
+        const warehouses = document.getElementById(
+            "warehouseTable"
+        );
+
+        warehouses.replaceChildren();
+
+        for (const w of data.warehouses) {
+            const row = warehouses.insertRow();
+
+            [
+                w.name,
+                w.city,
+                w.stock,
+                w.reserved_stock,
+                w.available_stock
+            ].forEach(value => addCell(row, value));
+        }
+
+        document.getElementById(
+            "validationSummary"
+        ).textContent =
+            "Orders checked: " + validation.orders_checked +
+            " | Issues detected: " + validation.issues_count +
+            " | Scope: first 20 orders with shipments";
+
+        const issuesTable = document.getElementById(
+            "issuesTable"
+        );
+
+        issuesTable.replaceChildren();
+
+        if (validation.issues.length === 0) {
+            const row = issuesTable.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 2;
+            cell.textContent =
+                "No issues detected in this sample.";
+        }
+
+        for (const issue of validation.issues) {
+            const row = issuesTable.insertRow();
+            addCell(row, issue.issue_type);
+            addCell(
+                row,
+                issue.shipment_id || issue.order_id || ""
+            );
+        }
+
+    } catch (error) {
+        const message = document.getElementById("message");
+        message.className = "alert alert-danger";
+        message.textContent = error.message;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadAnalytics);
+</script>
+
+</body>
+</html>

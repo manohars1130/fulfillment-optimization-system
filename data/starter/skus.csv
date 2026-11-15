@@ -1,0 +1,11 @@
+sku_id,name,category,unit_weight_kg,is_active
+SKU-000001,Product 1,Books,2.939,True
+SKU-000002,Product 2,Clothing,0.338,True
+SKU-000003,Product 3,Clothing,1.229,True
+SKU-000004,Product 4,Electronics,3.597,True
+SKU-000005,Product 5,Home,0.745,True
+SKU-000006,Product 6,Clothing,1.048,True
+SKU-000007,Product 7,Home,0.622,True
+SKU-000008,Product 8,Clothing,3.807,True
+SKU-000009,Product 9,Home,0.668,True
+SKU-000010,Product 10,Home,2.310,True

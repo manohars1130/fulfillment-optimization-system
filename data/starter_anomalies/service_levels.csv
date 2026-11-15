@@ -1,0 +1,6 @@
+service_id,carrier_id,name,transit_days,cutoff_time,is_active
+SRV-2026-001-001,CAR-2026-000001,Express,2,16:00:00,True
+SRV-2026-001-002,CAR-2026-000001,Standard,4,16:00:00,True
+SRV-2026-002-001,CAR-2026-000002,Express,2,16:00:00,True
+SRV-2026-002-002,CAR-2026-000002,Standard,4,16:00:00,True
+SRV-2026-UNSUPPORTED,CAR-2026-000001,Express,2,16:00:00,True

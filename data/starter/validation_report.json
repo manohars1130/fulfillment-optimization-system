@@ -1,0 +1,20 @@
+{
+  "scale": "starter",
+  "row_counts": {
+    "orders": 100,
+    "order_lines": 201,
+    "skus": 10,
+    "nodes": 2,
+    "inventory": 20,
+    "allocations": 201,
+    "capacities": 60,
+    "shipments": 103,
+    "shipment_lines": 201,
+    "tracking": 412,
+    "promises": 100,
+    "outcomes": 100
+  },
+  "issues_count": 0,
+  "issues_by_type": {},
+  "issues": []
+}

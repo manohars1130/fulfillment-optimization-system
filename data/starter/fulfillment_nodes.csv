@@ -1,0 +1,3 @@
+node_id,name,city,state,is_active
+FUL-2026-000001,Hyderabad Warehouse 1,Hyderabad,Telangana,True
+FUL-2026-000002,Bengaluru Warehouse 2,Bengaluru,Karnataka,True

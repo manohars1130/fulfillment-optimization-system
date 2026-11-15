@@ -1,0 +1,44 @@
+{
+  "dataset": "starter_anomalies",
+  "ground_truth_count": 5,
+  "detected_unique_issues": 7,
+  "true_positives": 5,
+  "false_positives": 2,
+  "false_negatives": 0,
+  "precision": 0.7143,
+  "recall": 1.0,
+  "f1_score": 0.8333,
+  "matched": [
+    {
+      "issue_type": "ALLOCATION_EXCEEDS_STOCK",
+      "record_id": "ALLOC-2026-000001"
+    },
+    {
+      "issue_type": "DELIVERED_BEFORE_DISPATCH",
+      "record_id": "TRK-SHP-2026-000002-004"
+    },
+    {
+      "issue_type": "PROMISE_BEFORE_ORDER",
+      "record_id": "PROM-ORD-2026-000001-01"
+    },
+    {
+      "issue_type": "SPLIT_STATUS_ROLLUP_MISMATCH",
+      "record_id": "ORD-2026-000006"
+    },
+    {
+      "issue_type": "UNSUPPORTED_CARRIER_ZONE",
+      "record_id": "SHP-2026-000001"
+    }
+  ],
+  "missed": [],
+  "additional_findings": [
+    {
+      "issue_type": "INVALID_TRACKING_SEQUENCE",
+      "record_id": "TRK-SHP-2026-000002-004"
+    },
+    {
+      "issue_type": "OVER_ALLOCATED_ORDER_LINE",
+      "record_id": "61"
+    }
+  ]
+}

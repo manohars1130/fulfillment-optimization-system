@@ -1,0 +1,6 @@
+issue_type,record_id,expected_label,details
+PROMISE_BEFORE_ORDER,PROM-ORD-2026-000001-01,1,Promised date earlier than order date
+ALLOCATION_EXCEEDS_STOCK,ALLOC-2026-000001,1,Allocated quantity exceeds physical stock
+UNSUPPORTED_CARRIER_ZONE,SHP-2026-000001,1,Service has no supported destination-zone mapping
+DELIVERED_BEFORE_DISPATCH,TRK-SHP-2026-000002-004,1,Delivery timestamp precedes dispatch
+SPLIT_STATUS_ROLLUP_MISMATCH,ORD-2026-000146,1,All split shipments delivered but order marked partial
